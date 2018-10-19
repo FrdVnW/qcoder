@@ -43,7 +43,6 @@ if (interactive()) {
           tabsetPanel(id = "subTabPanel1",
             tabPanel("Edit",
                uiOutput( 'choices' ),
-               uiOutput("addsubmit_new_code"),
                uiOutput('saveButton'),
                uiOutput('mydocA')),
             tabPanel("Existing file",
@@ -57,6 +56,7 @@ if (interactive()) {
             ) # close document sub-tabset
        ), # close editor tab panel
        tabPanel("Codes",
+                uiOutput("addsubmit_new_code"),
                 tableOutput('code_table')
 
       ), # close codes tab panel
@@ -195,12 +195,17 @@ if (interactive()) {
 
 
       ## Adding a new code
-      if (project.status$addingcode == FALSE) {
-          output$addsubmit_new_code <- actionButton(
-              "add_new_code",
-              "Add a new code",
-              icon = icon("plus"))
-      } else {
+      output$addsubmit_new_code <- renderUI({
+          tagList(
+              actionButton(
+                  "add_new_code",
+                  "Add a new code",
+                  icon = icon("plus"))
+          )
+      })
+     
+      observeEvent(input$add_new_code,{
+          project.status$addingcode=TRUE
           output$addsubmit_new_code <- renderUI({
               tagList(
                   textInput("new_code",
@@ -213,25 +218,17 @@ if (interactive()) {
                                icon = icon("share-square"))
               )
           })
-      }
- 
-      observeEvent(input$add_new_code,{
-          project.status$addingcode=TRUE
-      })
-      observeEvent(input$submit_new_code,{
-          project.status$addingcode=FALSE
+          
       })
       
-
-
       observeEvent(input$submit_new_code, {
           req(input$new_code,input$new_code_description)
+          project.status$addingcode=FALSE
           x <- readRDS(codes_df_path)
-          add_new_code(input$new_code,
+          qcoder::add_new_code(input$new_code,
                                input$new_code_description,
                                x, codes_df_path)
       })
-
 
 
       # Create the text editor

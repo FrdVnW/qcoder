@@ -42,7 +42,7 @@ URL: https://github.com/ropenscilabs/qcoder
 BugReports: https://github.com/ropenscilabs/qcoder/issues
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Collate: 
   'read_in_files.R'
   'parse_qcodes.R'
