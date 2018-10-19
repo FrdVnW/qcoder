@@ -41,10 +41,18 @@ if (interactive()) {
              # make sure these are unique
 
           tabsetPanel(id = "subTabPanel1",
-            tabPanel("Edit",
-               uiOutput( 'choices' ),
-               uiOutput('saveButton'),
-               uiOutput('mydocA')),
+                      tabPanel("Edit",
+                               fluidRow(
+                                   column(6,
+                                          uiOutput( 'choices' ),
+                                          uiOutput('saveButton')
+                               ),
+                               column(6,
+                                      uiOutput("addsubmit_new_code")
+                                      )
+                               ),
+                               uiOutput('mydocA'))
+               ,
             tabPanel("Existing file",
                htmlOutput("this_doc" )
                ),
@@ -56,7 +64,6 @@ if (interactive()) {
             ) # close document sub-tabset
        ), # close editor tab panel
        tabPanel("Codes",
-                uiOutput("addsubmit_new_code"),
                 tableOutput('code_table')
 
       ), # close codes tab panel
