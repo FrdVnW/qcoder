@@ -43,6 +43,7 @@ if (interactive()) {
           tabsetPanel(id = "subTabPanel1",
             tabPanel("Edit",
                uiOutput( 'choices' ),
+               uiOutput("addsubmit_new_code"),
                uiOutput('saveButton'),
                uiOutput('mydocA')),
             tabPanel("Existing file",
@@ -128,7 +129,8 @@ if (interactive()) {
                                    "/data_frames/qcoder_unit_document_map_",
                                    basename(project_path), ".rds")
 
-      project.status <- reactiveValues(saved=TRUE
+      project.status <- reactiveValues(saved=TRUE,
+                                       addingcode=FALSE
                                        )
       
       my_choices <- reactive({
@@ -190,6 +192,47 @@ if (interactive()) {
       return(code_df["code"])
 
     })
+
+
+      ## Adding a new code
+      if (project.status$addingcode == FALSE) {
+          output$addsubmit_new_code <- actionButton(
+              "add_new_code",
+              "Add a new code",
+              icon = icon("plus"))
+      } else {
+          output$addsubmit_new_code <- renderUI({
+              tagList(
+                  textInput("new_code",
+                            label = "New code"
+                            ),
+                  textInput("new_code_description",
+                            label = "Description"
+                            ),
+                  actionButton("submit_new_code", "Submit new code",
+                               icon = icon("share-square"))
+              )
+          })
+      }
+ 
+      observeEvent(input$add_new_code,{
+          project.status$addingcode=TRUE
+      })
+      observeEvent(input$submit_new_code,{
+          project.status$addingcode=FALSE
+      })
+      
+
+
+      observeEvent(input$submit_new_code, {
+          req(input$new_code,input$new_code_description)
+          x <- readRDS(codes_df_path)
+          add_new_code(input$new_code,
+                               input$new_code_description,
+                               x, codes_df_path)
+      })
+
+
 
       # Create the text editor
        output$mydocA <- renderUI({list(useShinyjs(),

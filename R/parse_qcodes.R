@@ -184,6 +184,34 @@ add_discovered_code <- function(codes_list = "", code_data_frame = NULL , codes_
     }
 }
 
+#' Update codes data frame with description
+#' Add code to the codes data frame
+#'
+#' @param new_code The name of a code (usually from a add code form)
+#' @param code_data_frame Existing data frame of QCODE codes
+#' @param codes_df_path The path where the updated code data frame should be saved
+#'
+#' @export
+add_new_code <- function(new_code = "" , description = "" , code_data_frame = NULL , codes_df_path = "" ){
+    code_data_frame <- as.data.frame(code_data_frame)
+    old_codes <- as.character(code_data_frame[,"code"])
+    new_code <- unique(new_code)
+    code <- setdiff(new_code, old_codes)
+    if (length(code) > 0){
+      code_id <- integer(length(code))
+      code.description <- description
+      new_rows <- data.frame(code_id, code, code.description)
+
+      code_data_frame <- rbind(code_data_frame, new_rows)
+      row_n <- row.names(code_data_frame)
+      code_data_frame$code_id[length(old_codes):
+                      (length(old_codes) + length(code))] <-
+        row_n[length(old_codes):(length(old_codes) + length(code))]
+
+      saveRDS(code_data_frame, file = codes_df_path )
+    }
+}
+
 #' Extract codes from text
 #' Take coded text and extract the codes, assuming they are correctly formatted.
 #' @param doc_text  The text data for a single document
