@@ -128,7 +128,7 @@ add_unit <- function(units_df, new_unit, units_df_path){
     warning("A unit with the name already exists, please choose a unique name.")
     return()
   }
-  new_id <- max(units_df$unit_id) +1
+  new_id <- max(c(0,units_df$unit_id)) +1
   new_row <- data.frame("unit_id" = new_id, "name" = new_unit)
   units_df <- rbind(units_df, new_row)
   saveRDS(units_df, file = units_df_path)
