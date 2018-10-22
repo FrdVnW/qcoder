@@ -73,6 +73,8 @@ if (interactive()) {
 
       #), # close add code panel
       tabPanel("Coded data",
+               ## Button
+               downloadButton("download_coded", "Download the table ('.csv')")
                dataTableOutput('coded')
 
       ), # close coded tab panel
@@ -267,6 +269,7 @@ if (interactive()) {
 
       output$this_doc <-{renderText(qcoder::txt2html(doc()))}
 
+
       # Get the code data for display
       output$code_table <- DT::renderDataTable({
           if (codes_df_path == "") {return()}
@@ -292,6 +295,14 @@ if (interactive()) {
 
           DT::datatable(parsed,options = list(paging = FALSE))
         })
+
+      ## Export the coding table (parsed values with codes ?)
+      output$download_coded <- downloadHandler(
+          filename = paste("coded-data-", Sys.Date(), ".csv", sep=""),
+          content = function(file) {
+              write.csv(parsed, file, row.names = FALSE)
+          }
+      )
 
       output$code_freq <- DT::renderDataTable({
           if (docs_df_path == "" | codes_df_path == "" ) {return()}
