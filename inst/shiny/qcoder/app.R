@@ -41,10 +41,18 @@ if (interactive()) {
              # make sure these are unique
 
           tabsetPanel(id = "subTabPanel1",
-            tabPanel("Edit",
-               uiOutput( 'choices' ),
-               uiOutput('saveButton'),
-               uiOutput('mydocA')),
+                      tabPanel("Edit",
+                               fluidRow(
+                                   column(6,
+                                          uiOutput( 'choices' ),
+                                          uiOutput('saveButton')
+                               ),
+                               column(6,
+                                      uiOutput("addsubmit_new_code")
+                                      )
+                               ),
+                               uiOutput('mydocA'))
+               ,
             tabPanel("Existing file",
                htmlOutput("this_doc" )
                ),
@@ -128,7 +136,8 @@ if (interactive()) {
                                    "/data_frames/qcoder_unit_document_map_",
                                    basename(project_path), ".rds")
 
-      project.status <- reactiveValues(saved=TRUE
+      project.status <- reactiveValues(saved=TRUE,
+                                       addingcode=FALSE
                                        )
       
       my_choices <- reactive({
@@ -190,6 +199,44 @@ if (interactive()) {
       return(code_df["code"])
 
     })
+
+
+      ## Adding a new code
+      output$addsubmit_new_code <- renderUI({
+          tagList(
+              actionButton(
+                  "add_new_code",
+                  "Add a new code",
+                  icon = icon("plus"))
+          )
+      })
+     
+      observeEvent(input$add_new_code,{
+          project.status$addingcode=TRUE
+          output$addsubmit_new_code <- renderUI({
+              tagList(
+                  textInput("new_code",
+                            label = "New code"
+                            ),
+                  textInput("new_code_description",
+                            label = "Description"
+                            ),
+                  actionButton("submit_new_code", "Submit new code",
+                               icon = icon("share-square"))
+              )
+          })
+          
+      })
+      
+      observeEvent(input$submit_new_code, {
+          req(input$new_code,input$new_code_description)
+          project.status$addingcode=FALSE
+          x <- readRDS(codes_df_path)
+          qcoder::add_new_code(input$new_code,
+                               input$new_code_description,
+                               x, codes_df_path)
+      })
+
 
       # Create the text editor
        output$mydocA <- renderUI({list(useShinyjs(),
@@ -306,14 +353,12 @@ if (interactive()) {
           text_df <- readRDS(docs_df_path)
           old_docs <- text_df[["doc_path"]]
           files.series <- list.files(doc_folder)
-          files.series <- grep('.txt$',
-                                   setdiff(files.series,old_docs),
-                                   value=TRUE,perl=TRUE)
+          files.series <- setdiff(files.series,old_docs)
           
           output$selectsend_new_document <- renderUI({
               tagList(
               selectInput("file",
-                          label = "Select a new '.txt' file in the document folder of the project",
+                          label = "Select a new file in the document folder of the project",
                           choices = files.series
                           ),
               actionButton("send_new_document", "Send new document",
