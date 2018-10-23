@@ -64,6 +64,10 @@ if (interactive()) {
 
             ) # close document sub-tabset
        ), # close editor tab panel
+       tabPanel("Concpets",
+                dataTableOutput('concept_table')
+
+      ), # close codes tab panel
        tabPanel("Codes",
                 dataTableOutput('code_table')
 
@@ -129,6 +133,9 @@ if (interactive()) {
         docs_df_path <<- paste0(project_path,
                                 "/data_frames/qcoder_documents_",
                                 basename(project_path), ".rds")
+        concepts_df_path <<- paste0(project_path,
+                                 "/data_frames/qcoder_concepts_",
+                                 basename(project_path), ".rds")
         codes_df_path <<- paste0(project_path,
                                  "/data_frames/qcoder_codes_",
                                  basename(project_path), ".rds")
@@ -269,6 +276,13 @@ if (interactive()) {
 
       output$this_doc <-{renderText(qcoder::txt2html(doc()))}
 
+
+      # Get the code data for display
+      output$concept_table <- DT::renderDataTable({
+          if (concepts_df_path == "") {return()}
+          concept_df <- readRDS(concepts_df_path)
+          DT::datatable(concept_df,options = list(paging = FALSE))
+        })
 
       # Get the code data for display
       output$code_table <- DT::renderDataTable({
