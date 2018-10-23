@@ -1,4 +1,3 @@
-#
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above. Alternitively in the console run qcode().
 # This assumes that you have set up a standard QCoder project.
@@ -148,7 +147,8 @@ if (interactive()) {
                                    basename(project_path), ".rds")
 
       project.status <- reactiveValues(saved=TRUE,
-                                       addingcode=FALSE
+                                       addingcode=FALSE,
+                                       addingconcepts=FALSE                        
                                        )
       
       my_choices <- reactive({
