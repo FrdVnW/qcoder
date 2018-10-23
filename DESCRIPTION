@@ -50,3 +50,4 @@ Collate:
   'qcoder-package.R'
   'utils.R'
   'selection.R'
+  'cogmap.R'
