@@ -49,7 +49,8 @@ if (interactive()) {
                                           uiOutput('saveButton')
                                ),
                                column(6,
-                                      uiOutput("addsubmit_new_code")
+                                      uiOutput("addsubmit_new_code"),
+                                      uiOutput("addsubmit_new_concept")
                                       )
                                ),
                                uiOutput('mydocA'))
@@ -211,6 +212,45 @@ if (interactive()) {
     })
 
 
+      ## Adding a new concept
+      output$addsubmit_new_concept <- renderUI({
+          tagList(
+              actionButton(
+                  "add_new_concept",
+                  "Add a new concept",
+                  icon = icon("plus"))
+          )
+      })
+     
+      observeEvent(input$add_new_concept,{
+          project.status$addingconcept=TRUE
+          output$addsubmit_new_concept <- renderUI({
+              tagList(
+                  textInput("new_concept",
+                            label = "New concept"
+                            ),
+                  textInput("new_concept_description",
+                            label = "Description"
+                            ),
+                  actionButton("submit_new_concept", "Submit new concept",
+                               icon = icon("share-square"))
+              )
+          })
+          
+      })
+      
+      observeEvent(input$submit_new_concept, {
+          req(input$new_concept,input$new_concept_description)
+          project.status$addingconcept=FALSE
+          x <- readRDS(concepts_df_path)
+          qconceptr::add_new_concept(input$new_concept,
+                               input$new_concept_description,
+                               x, concepts_df_path)
+      })
+
+
+
+      
       ## Adding a new code
       output$addsubmit_new_code <- renderUI({
           tagList(
