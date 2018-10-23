@@ -35,35 +35,25 @@ if (interactive()) {
       # Start tabset
       navlistPanel(
            # Tab title
-           tabPanel("Add codes to text data",
-          #  conditionalPanel(condition = "input$project_directory == TRUE",
-             # Edit box and document selector
-             # make sure these are unique
+          tabPanel("Add codes to text data",
+                   ##  conditionalPanel(condition = "input$project_directory == TRUE",
+                   ## Edit box and document selector
+                   ## make sure these are unique
 
-          tabsetPanel(id = "subTabPanel1",
-                      tabPanel("Edit",
-                               fluidRow(
-                                   column(6,
-                                          uiOutput( 'choices' ),
-                                          uiOutput('saveButton')
-                               ),
-                               column(6,
-                                      uiOutput("addsubmit_new_code"),
-                                      uiOutput("addsubmit_new_concept")
-                                      )
-                               ),
-                               uiOutput('mydocA'))
-               ,
-            tabPanel("Existing file",
-               htmlOutput("this_doc" )
-               ),
-            tabPanel("Unit to Document Links" ,
-                     uiOutput('checkbox_save_links'),
-                     uiOutput('checkbox_links')
-                    )
-
-            ) # close document sub-tabset
-       ), # close editor tab panel
+                   tabsetPanel(id = "subTabPanel1",
+                               tabPanel("Edit",
+                                        uiOutput( 'choices' ),
+                                        uiOutput('saveButton'),
+                                        uiOutput('mydocA')),
+                               tabPanel("Existing file",
+                                        htmlOutput("this_doc" )
+                                        ),
+                               tabPanel("Unit to Document Links" ,
+                                        uiOutput('checkbox_save_links'),
+                                        uiOutput('checkbox_links')
+                                        )
+                               ) # close document sub-tabset
+                   ), # close editor tab panel
        tabPanel("Concpets",
                 dataTableOutput('concept_table')
 
@@ -101,7 +91,12 @@ if (interactive()) {
              uiOutput("selectsend_new_document"),
              tags$h2("Add new unit"),
              textInput("new_unit",  "Unit name"),
-             uiOutput('add_new_unit')
+             uiOutput('add_new_unit'),
+             tags$h2("Add new concept"),
+             uiOutput("addsubmit_new_concept"),
+             tags$h2("Add new code"),
+             uiOutput("addsubmit_new_code")
+                                                  
 
      ) # close add data tab
     ) # close tab set
@@ -148,7 +143,7 @@ if (interactive()) {
 
       project.status <- reactiveValues(saved=TRUE,
                                        addingcode=FALSE,
-                                       addingconcepts=FALSE                        
+                                       addingconcept=FALSE                        
                                        )
       
       my_choices <- reactive({
@@ -243,7 +238,7 @@ if (interactive()) {
           req(input$new_concept,input$new_concept_description)
           project.status$addingconcept=FALSE
           x <- readRDS(concepts_df_path)
-          qconceptr::add_new_concept(input$new_concept,
+          qcoder::add_new_concept(input$new_concept,
                                input$new_concept_description,
                                x, concepts_df_path)
       })

@@ -83,7 +83,7 @@ create_empty_concept_file <- function( data_frame_name = "qcoder_concepts",
 #' Add concept to the concepts data frame
 #'
 #' @param new_concept The name of a concept (usually from a add concept form)
-#' @param concept_data_frame Existing data frame of QCONCEPT concepts
+#' @param concept_data_frame Existing data frame of QCODER concepts
 #' @param concepts_df_path The path where the updated concept data frame should be saved
 #'
 #' @export
