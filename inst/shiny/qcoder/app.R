@@ -212,6 +212,84 @@ if (interactive()) {
       return(code_df["code"])
     })
 
+      
+      ## Adding a new concept
+      output$addsubmit_new_concept <- renderUI({
+          tagList(
+              actionButton(
+                  "add_new_concept",
+                  "Add a new concept",
+                  icon = icon("plus"))
+          )
+      })
+     
+      observeEvent(input$add_new_concept,{
+          project_status$addingconcept=TRUE
+          output$addsubmit_new_concept <- renderUI({
+              tagList(
+                  textInput("new_concept",
+                            label = "New concept"
+                            ),
+                  textInput("new_concept_description",
+                            label = "Description"
+                            ),
+                  actionButton("submit_new_concept", "Submit new concept",
+                               icon = icon("share-square"))
+              )
+          })
+          
+      })
+      
+      observeEvent(input$submit_new_concept, {
+          req(input$new_concept,input$new_concept_description)
+          project_status$addingconcept=FALSE
+          x <- readRDS(concepts_df_path)
+          qcoder::add_new_concept(input$new_concept,
+                               input$new_concept_description,
+                               x, concepts_df_path)
+      })
+
+
+
+      
+      ## Adding a new code
+      output$addsubmit_new_code <- renderUI({
+          tagList(
+              actionButton(
+                  "add_new_code",
+                  "Add a new code",
+                  icon = icon("plus"))
+          )
+      })
+     
+      observeEvent(input$add_new_code,{
+          project_status$addingcode=TRUE
+          output$addsubmit_new_code <- renderUI({
+              tagList(
+                  textInput("new_code",
+                            label = "New code"
+                            ),
+                  textInput("new_code_description",
+                            label = "Description"
+                            ),
+                  actionButton("submit_new_code", "Submit new code",
+                               icon = icon("share-square"))
+              )
+          })
+          
+      })
+      
+      observeEvent(input$submit_new_code, {
+          req(input$new_code,input$new_code_description)
+          project_status$addingcode=FALSE
+          x <- readRDS(codes_df_path)
+          qcoder::add_new_code(input$new_code,
+                               input$new_code_description,
+                               x, codes_df_path)
+      })
+
+
+
       # Create the text editor
        output$mydocA <- renderUI({list(useShinyjs(),
          selectInput(inputId = "select_concept_from", label = "Add a relationship from",
@@ -353,80 +431,6 @@ if (interactive()) {
            }
     )
 
-      ## Adding a new concept
-      output$addsubmit_new_concept <- renderUI({
-          tagList(
-              actionButton(
-                  "add_new_concept",
-                  "Add a new concept",
-                  icon = icon("plus"))
-          )
-      })
-     
-      observeEvent(input$add_new_concept,{
-          project_status$addingconcept=TRUE
-          output$addsubmit_new_concept <- renderUI({
-              tagList(
-                  textInput("new_concept",
-                            label = "New concept"
-                            ),
-                  textInput("new_concept_description",
-                            label = "Description"
-                            ),
-                  actionButton("submit_new_concept", "Submit new concept",
-                               icon = icon("share-square"))
-              )
-          })
-          
-      })
-      
-      observeEvent(input$submit_new_concept, {
-          req(input$new_concept,input$new_concept_description)
-          project_status$addingconcept=FALSE
-          x <- readRDS(concepts_df_path)
-          qcoder::add_new_concept(input$new_concept,
-                               input$new_concept_description,
-                               x, concepts_df_path)
-      })
-
-
-
-      
-      ## Adding a new code
-      output$addsubmit_new_code <- renderUI({
-          tagList(
-              actionButton(
-                  "add_new_code",
-                  "Add a new code",
-                  icon = icon("plus"))
-          )
-      })
-     
-      observeEvent(input$add_new_code,{
-          project_status$addingcode=TRUE
-          output$addsubmit_new_code <- renderUI({
-              tagList(
-                  textInput("new_code",
-                            label = "New code"
-                            ),
-                  textInput("new_code_description",
-                            label = "Description"
-                            ),
-                  actionButton("submit_new_code", "Submit new code",
-                               icon = icon("share-square"))
-              )
-          })
-          
-      })
-      
-      observeEvent(input$submit_new_code, {
-          req(input$new_code,input$new_code_description)
-          project_status$addingcode=FALSE
-          x <- readRDS(codes_df_path)
-          qcoder::add_new_code(input$new_code,
-                               input$new_code_description,
-                               x, codes_df_path)
-      })
 
     # Adding a new document
       observeEvent(c(input$add_new_document,input$update),{
