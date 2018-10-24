@@ -81,6 +81,10 @@ if (interactive()) {
 
      ),
      tabPanel("Add data",
+              tags$h2("Add new concept"),
+              uiOutput("addsubmit_new_concept"),
+              tags$h2("Add new code"),
+              uiOutput("addsubmit_new_code"),
               tags$h2("Add new document"),
               actionButton("add_new_document", "Add a new document",
                      icon = icon("plus")),
@@ -91,12 +95,7 @@ if (interactive()) {
              uiOutput("selectsend_new_document"),
              tags$h2("Add new unit"),
              textInput("new_unit",  "Unit name"),
-             uiOutput('add_new_unit'),
-             tags$h2("Add new concept"),
-             uiOutput("addsubmit_new_concept"),
-             tags$h2("Add new code"),
-             uiOutput("addsubmit_new_code")
-                                                  
+             uiOutput('add_new_unit')                                                  
 
      ) # close add data tab
     ) # close tab set
@@ -105,10 +104,8 @@ if (interactive()) {
   )
 }
 
-
   # Define server logic
   server <- function(input, output, session) {
-
 
     # Select the project directory
     user_folder <- c('Select Volume' = Sys.getenv("HOME"))
@@ -141,11 +138,13 @@ if (interactive()) {
                                    "/data_frames/qcoder_unit_document_map_",
                                    basename(project_path), ".rds")
 
-      project.status <- reactiveValues(saved=TRUE,
+      project_status <- reactiveValues(saved=TRUE,
                                        addingcode=FALSE,
-                                       addingconcept=FALSE                        
+                                       addingconcept=FALSE
                                        )
       
+      ## coding_status <- reactiveValues(select_code="none")
+                                           
       my_choices <- reactive({
         req(input$select_project)
         if (input$select_project[1] == ""){return()}
@@ -164,7 +163,7 @@ if (interactive()) {
          })
 
       output$saveButton <- renderUI({
-          if (project.status$saved) {
+          if (project_status$saved) {
               saving.alert <- "check-circle"
           } else {
               saving.alert <- "exclamation-triangle"
@@ -173,7 +172,7 @@ if (interactive()) {
       })
 
       observeEvent(input$submit,{
-          project.status$saved=TRUE
+          project_status$saved=TRUE
       })
 
     # Functions related to rendering an individual text document in an editor and
@@ -199,94 +198,26 @@ if (interactive()) {
     comps[["codes"]] <- code_df["code"]
     comps[["tags"]] <- c("QCODE",  "{#")
 
+    concepts <- reactive({
+      if (concepts_df_path == "") {return()}
+      concept_df <- readRDS(concepts_df_path)
+      concept_l <- as.list(as.character(concept_df[["concept_id"]]))
+      names(concept_l)  <- as.character(concept_df[["concept"]])
+      return(concept_l)
+    })
+      
     codes <- reactive({
       if (codes_df_path == "") {return()}
       code_df <- readRDS(codes_df_path)
       return(code_df["code"])
-
     })
-
-
-      ## Adding a new concept
-      output$addsubmit_new_concept <- renderUI({
-          tagList(
-              actionButton(
-                  "add_new_concept",
-                  "Add a new concept",
-                  icon = icon("plus"))
-          )
-      })
-     
-      observeEvent(input$add_new_concept,{
-          project.status$addingconcept=TRUE
-          output$addsubmit_new_concept <- renderUI({
-              tagList(
-                  textInput("new_concept",
-                            label = "New concept"
-                            ),
-                  textInput("new_concept_description",
-                            label = "Description"
-                            ),
-                  actionButton("submit_new_concept", "Submit new concept",
-                               icon = icon("share-square"))
-              )
-          })
-          
-      })
-      
-      observeEvent(input$submit_new_concept, {
-          req(input$new_concept,input$new_concept_description)
-          project.status$addingconcept=FALSE
-          x <- readRDS(concepts_df_path)
-          qcoder::add_new_concept(input$new_concept,
-                               input$new_concept_description,
-                               x, concepts_df_path)
-      })
-
-
-
-      
-      ## Adding a new code
-      output$addsubmit_new_code <- renderUI({
-          tagList(
-              actionButton(
-                  "add_new_code",
-                  "Add a new code",
-                  icon = icon("plus"))
-          )
-      })
-     
-      observeEvent(input$add_new_code,{
-          project.status$addingcode=TRUE
-          output$addsubmit_new_code <- renderUI({
-              tagList(
-                  textInput("new_code",
-                            label = "New code"
-                            ),
-                  textInput("new_code_description",
-                            label = "Description"
-                            ),
-                  actionButton("submit_new_code", "Submit new code",
-                               icon = icon("share-square"))
-              )
-          })
-          
-      })
-      
-      observeEvent(input$submit_new_code, {
-          req(input$new_code,input$new_code_description)
-          project.status$addingcode=FALSE
-          x <- readRDS(codes_df_path)
-          qcoder::add_new_code(input$new_code,
-                               input$new_code_description,
-                               x, codes_df_path)
-      })
-
 
       # Create the text editor
        output$mydocA <- renderUI({list(useShinyjs(),
-         selectInput(inputId = "select_codes", label = "Select Codes to Add",
-                     choices = codes(), selected=codes()[1], multiple = TRUE),
+         selectInput(inputId = "select_concept_from", label = "Add a relationship from",
+                     choices = concepts()),
+         selectInput(inputId = "select_concept_to", label = "to ",
+                     choices = concepts()),
          actionButton("replace", "Add selected code"),
 
            aceEditor(
@@ -306,7 +237,7 @@ if (interactive()) {
        })
 
       observeEvent(input$replace,{
-          project.status$saved=FALSE
+          project_status$saved=FALSE
           })
 
       output$this_doc <-{renderText(qcoder::txt2html(doc()))}
@@ -375,31 +306,39 @@ if (interactive()) {
       input$aceeditor
     })
 
-    update_editor <- observeEvent(input$replace, {
+     
+      update_editor <- observeEvent(input$replace, {
+          select_code <- paste(input$select_concept_from,input$select_concept_to,sep=">")
+          x <- readRDS(codes_df_path)
+          if (!(select_code %in% x$code)) {
+          qcoder::add_new_code(select_code,
+                               '', ## to be amended or to be define in another function
+                               x, codes_df_path)
+          }
+          
+          text_old <- new_text()
+          codes <- select_code
+          selected <- input$selected
+          if (length(selected) == 0) {return(message("No text selected"))}
 
-      text_old <- new_text()
-      codes <- input$select_codes
-      selected <- input$selected
-      if (length(selected) == 0) {return(message("No text selected"))}
+          updated_selection <- qcoder:::add_codes_to_selection(selection = selected, codes = codes)
 
-      updated_selection <- qcoder:::add_codes_to_selection(selection = selected, codes = codes)
+          updated_text <- qcoder:::replace_selection(text_old, selected, updated_selection)
 
-      updated_text <- qcoder:::replace_selection(text_old, selected, updated_selection)
+          updateAceEditor(session=session, editorId=editor_name, value=updated_text)
+                                        # put js code to move cursor here
+          jump_to <- input$cursorpos
+                                        # print(jump_to)
+          row_num <- jump_to$row + 1
+          col_num <- jump_to$column + (nchar(updated_selection) - nchar(selected))
 
-      updateAceEditor(session=session, editorId=editor_name, value=updated_text)
-      # put js code to move cursor here
-      jump_to <- input$cursorpos
-      # print(jump_to)
-      row_num <- jump_to$row + 1
-      col_num <- jump_to$column + (nchar(updated_selection) - nchar(selected))
+                                        # print(jump_to)
 
-      # print(jump_to)
+          js_statement <- paste0("editor__",editor_name,".focus(); editor__",editor_name,".gotoLine(", row_num, ",", col_num, ");")
+                                        # print(js_statement)
 
-      js_statement <- paste0("editor__",editor_name,".focus(); editor__",editor_name,".gotoLine(", row_num, ",", col_num, ");")
-      # print(js_statement)
-
-      shinyjs::runjs(js_statement)
-    })
+          shinyjs::runjs(js_statement)
+      })
 
 
     update_document <-observeEvent(input$submit,
@@ -413,6 +352,81 @@ if (interactive()) {
              }
            }
     )
+
+      ## Adding a new concept
+      output$addsubmit_new_concept <- renderUI({
+          tagList(
+              actionButton(
+                  "add_new_concept",
+                  "Add a new concept",
+                  icon = icon("plus"))
+          )
+      })
+     
+      observeEvent(input$add_new_concept,{
+          project_status$addingconcept=TRUE
+          output$addsubmit_new_concept <- renderUI({
+              tagList(
+                  textInput("new_concept",
+                            label = "New concept"
+                            ),
+                  textInput("new_concept_description",
+                            label = "Description"
+                            ),
+                  actionButton("submit_new_concept", "Submit new concept",
+                               icon = icon("share-square"))
+              )
+          })
+          
+      })
+      
+      observeEvent(input$submit_new_concept, {
+          req(input$new_concept,input$new_concept_description)
+          project_status$addingconcept=FALSE
+          x <- readRDS(concepts_df_path)
+          qcoder::add_new_concept(input$new_concept,
+                               input$new_concept_description,
+                               x, concepts_df_path)
+      })
+
+
+
+      
+      ## Adding a new code
+      output$addsubmit_new_code <- renderUI({
+          tagList(
+              actionButton(
+                  "add_new_code",
+                  "Add a new code",
+                  icon = icon("plus"))
+          )
+      })
+     
+      observeEvent(input$add_new_code,{
+          project_status$addingcode=TRUE
+          output$addsubmit_new_code <- renderUI({
+              tagList(
+                  textInput("new_code",
+                            label = "New code"
+                            ),
+                  textInput("new_code_description",
+                            label = "Description"
+                            ),
+                  actionButton("submit_new_code", "Submit new code",
+                               icon = icon("share-square"))
+              )
+          })
+          
+      })
+      
+      observeEvent(input$submit_new_code, {
+          req(input$new_code,input$new_code_description)
+          project_status$addingcode=FALSE
+          x <- readRDS(codes_df_path)
+          qcoder::add_new_code(input$new_code,
+                               input$new_code_description,
+                               x, codes_df_path)
+      })
 
     # Adding a new document
       observeEvent(c(input$add_new_document,input$update),{
