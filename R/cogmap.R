@@ -33,13 +33,13 @@ read_concept_data <- function(file_path = "concepts/concepts.csv", concepts_df_p
                                                    concept.description = "c"))
       # validate column names etc here
       concept_data$concept <- as.factor(concept_data$concept)
+      # try catch this save
+      saveRDS(concept_data, file = concepts_df_path)
+      invisible(TRUE)
    } else {
-      concept_data <- create_empty_concept_file(project_name = project_name , concepts_df_path = concepts_df_path)
+       create_empty_concept_file(project_name = project_name , concepts_df_path = concepts_df_path)
    }
 
-  # try catch this save
-  saveRDS(concept_data, file = concepts_df_path)
-  invisible(TRUE)
 }
 
 #' Create an empty concepts data set
