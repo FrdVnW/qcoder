@@ -28,7 +28,7 @@ read_raw_data <- function(folder_path = "/documents/",
     }
 
     if (length(dir(folder_path)) != 0){
-      file_list <- dir(folder_path)
+     file_list <- dir(folder_path)
       doc_text  <- character()
       # This is because not all users will be able to install textreadr.
       if (!requireNamespace("textreadr", quietly = TRUE)){
@@ -284,9 +284,10 @@ create_unit_doc_file <- function(file_path = "data_frames",
 #' @param project_name The project name. This should represent the folder
 #'                     holding the project.
 #' @export
-import_project_data<- function(project_name){
+import_project_data <- function(project_name){
   read_raw_data(project_name = project_name)
   read_code_data(project_name = project_name)
+  read_concept_data(project_name = project_name)
   read_unit_data(project_name = project_name)
   read_unit_document_map_data(project_name = project_name)
 }
