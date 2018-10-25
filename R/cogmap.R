@@ -34,7 +34,7 @@ read_concept_data <- function(file_path = "concepts/concepts.csv", concepts_df_p
       # validate column names etc here
       concept_data$concept <- as.factor(concept_data$concept)
    } else {
-      concept_data <- create_empty_concept_file(project_name = project_path , concepts_df_path = concepts_df_path)
+      concept_data <- create_empty_concept_file(project_name = project_name , concepts_df_path = concepts_df_path)
    }
 
   # try catch this save
@@ -69,12 +69,12 @@ create_empty_concept_file <- function( data_frame_name = "qcoder_concepts",
                               data_frame_name, "_", project_name, ".rds" )
   }
 
-  cn <- c("concept_id", "concept", "concept.description")
+  cn <- c("concept_id", "concept", "concept_description")
   concept_data <- as.data.frame(matrix(data = NA, 0, length(cn)))
   colnames(concept_data) <- cn
   concept_data$concept_description <- as.character(concept_data$concept.description)
   concept_data$concept_id <- as.numeric(concept_data$concept_id)
-  concept_data$concept <-as.factor(concept_data$concept)
+  concept_data$concept <- as.factor(concept_data$concept)
   saveRDS(concept_data, file = concepts_df_path)
 
 }
