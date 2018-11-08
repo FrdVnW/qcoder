@@ -28,7 +28,7 @@ read_raw_data <- function(folder_path = "/documents/",
     }
 
     if (length(dir(folder_path)) != 0){
-      file_list <- dir(folder_path)
+     file_list <- dir(folder_path)
       doc_text  <- character()
       # This is because not all users will be able to install textreadr.
       if (!requireNamespace("textreadr", quietly = TRUE)){
@@ -128,13 +128,14 @@ read_code_data <- function(file_path = "codes/codes.csv", codes_df_path = "",
                                                    code.description = "c"))
       # validate column names etc here
       code_data$code <- as.factor(code_data$code)
+      # try catch this save
+      saveRDS(code_data, file = codes_df_path)
+      invisible(TRUE)
    } else {
-      code_data <- create_empty_code_file(project_name = project_path , codes_df_path = codes_df_path)
+      create_empty_code_file(project_name = project_name , codes_df_path = codes_df_path)
    }
 
-  # try catch this save
-  saveRDS(code_data, file = codes_df_path)
-  invisible(TRUE)
+
 }
 
 #' Create an empty codes data set
@@ -154,7 +155,7 @@ create_empty_code_file <-function( data_frame_name = "qcoder_codes",
                                    codes_df_path = "",
                                    project_path = "",
                                    file_path = "data_frames",
-                                   project_name = ""){
+                                   project_name = "" ){
   if (project_path == "" & project_name != ""){
     project_path <- paste0(getwd(), "/", project_name)
   }
@@ -284,9 +285,10 @@ create_unit_doc_file <- function(file_path = "data_frames",
 #' @param project_name The project name. This should represent the folder
 #'                     holding the project.
 #' @export
-import_project_data<- function(project_name){
+import_project_data <- function(project_name){
   read_raw_data(project_name = project_name)
   read_code_data(project_name = project_name)
+  read_concept_data(project_name = project_name)
   read_unit_data(project_name = project_name)
   read_unit_document_map_data(project_name = project_name)
 }
