@@ -11,7 +11,7 @@ add_new_concept(new_concept = "", description = "",
 \arguments{
 \item{new_concept}{The name of a concept (usually from a add concept form)}
 
-\item{concept_data_frame}{Existing data frame of QCONCEPT concepts}
+\item{concept_data_frame}{Existing data frame of QCODER concepts}
 
 \item{concepts_df_path}{The path where the updated concept data frame should be saved}
 }
