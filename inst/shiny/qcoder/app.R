@@ -19,89 +19,74 @@ if (interactive()) {
     editor_name <- "aceeditor"
 
     ## Define UI for application
-    ui <- fluidPage(
-        theme = shinytheme("flatly"),
-
-        mainPanel(
-            tags$h2("Qcoder"),
-            tags$p("Select your project folder"),
-            verbatimTextOutput("project_directory"),
-            shinyDirButton('select_project', label="Select Folder", title="Select your project folder",
-                           buttonType = "default", class = NULL),
-            actionButton("update", "Reload project for data updating",
-                         icon = icon("refresh")),
-            tags$br(),
-            tags$br(),
-            ## Start tabset
-            navlistPanel(
-                ## Tab title
-                tabPanel("Add codes to text data",
-                         ##  conditionalPanel(condition = "input$project_directory == TRUE",
-                         ## Edit box and document selector
-                         ## make sure these are unique
-
-                         tabsetPanel(id = "subTabPanel1",
-                                     tabPanel("Edit",
-                                              uiOutput( 'choices' ),
-                                              uiOutput('saveButton'),
-                                              uiOutput('mydocA')),
-                                     tabPanel("Existing file",
-                                              htmlOutput("this_doc" )
-                                              ),
-                                     tabPanel("Unit to Document Links" ,
-                                              uiOutput('checkbox_save_links'),
-                                              uiOutput('checkbox_links')
-                                              )
-                                     )## close document sub-tabset
-                         ),## close editor tab panel
-                 tabPanel("Concpets",
-                         dataTableOutput('concept_table')
-
-                         ),## close codes tab panel
-                tabPanel("Codes",
-                         dataTableOutput('code_table')
-
-                         ),## close codes tab panel
-                tabPanel("Codings",
-                         dataTableOutput('coding_table')
-
-                         ),## close codes tab panel
-                tabPanel("Coded data",
-                         ## Button
-                         downloadButton("download_coded", "Download the table ('.csv')"),
-                         dataTableOutput('coded')
-
-                         ),## close coded tab panel
-                tabPanel("Units",
-                         dataTableOutput('units_table')
-
-                         ),## close units panel
-                tabPanel("Summary",
-                         dataTableOutput('code_freq')
-
-                         ),
-                tabPanel("Add data",
-                         tags$h2("Add new concept"),
-                         uiOutput("addsubmit_new_concept"),
-                         tags$h2("Add new code"),
-                         uiOutput("addsubmit_new_code"),
-                         tags$h2("Add new document"),
-                         actionButton("add_new_document", "Add a new document",
-                                      icon = icon("plus")),
-                         ## shinyFilesButton('file', label="Select File", title="Select your new files from
-                         ##                the project folder", multiple= TRUE,
-                         ##                buttonType = "default", class = NULL),
-                         ## textInput("file",  "The full name of your file in the document folder"),
-                         uiOutput("selectsend_new_document"),
-                         tags$h2("Add new unit"),
-                         textInput("new_unit",  "Unit name"),
-                         uiOutput('add_new_unit')                                                  
-
-                         )## close add data tab
-            )## close tab set
-        )## close main panel
-
-    )
+    ui <- navbarPage("Qcoder",
+                     theme = shinytheme("flatly"),
+                     header = list(tags$p("Select your project folder"),
+                            verbatimTextOutput("project_directory"),
+                            shinyDirButton('select_project', label="Select Folder", title="Select your project folder",
+                                           buttonType = "default", class = NULL),
+                            actionButton("update", "Reload project for data updating",
+                                         icon = icon("refresh"))
+                            ), ## close header
+                     tabPanel("Coding documents",
+                              sidebarLayout(
+                                  sidebarPanel(
+                                      uiOutput('choices'),
+                                      uiOutput('saveButton'),
+                                      uiOutput('coding'),
+                                      actionButton("replace", "Add selected code")
+                                  ),## close add data tab
+                                  mainPanel(
+                                      tabsetPanel(id = "subTabPanel1",
+                                                  tabPanel("Edit",
+                                                           uiOutput('mydocA')),
+                                                  tabPanel("Existing file",
+                                                           htmlOutput("this_doc" )
+                                                           ),
+                                                  tabPanel("Unit to Document Links" ,
+                                                           uiOutput('checkbox_save_links'),
+                                                           uiOutput('checkbox_links')
+                                                           )
+                                                  )## close document sub-tabset
+                                  )## close main panel
+                              )## close sidebarLayout
+                              ),# close editor tab panel
+                     navbarMenu("Tables",
+                                tabPanel("Concpets",
+                                         dataTableOutput('concept_table')
+                                         ),## close codes tab panel
+                                tabPanel("Codes",
+                                         dataTableOutput('code_table')
+                                         ),## close codes tab panel
+                                tabPanel("Codings",
+                                         dataTableOutput('coding_table')
+                                         ),## close codes tab panel
+                                tabPanel("Coded data",
+                                         ## Button
+                                         downloadButton("download_coded", "Download the table ('.csv')"),
+                                         dataTableOutput('coded')
+                                         ),## close coded tab panel
+                                tabPanel("Units",
+                                         dataTableOutput('units_table')
+                                         ),## close units panel
+                                tabPanel("Summary",
+                                         dataTableOutput('code_freq')
+                                         )
+                                ),
+                     tabPanel("Add data",
+                              tags$h2("Add new concept"),
+                              uiOutput("addsubmit_new_concept"),
+                              tags$h2("Add new code"),
+                              uiOutput("addsubmit_new_code"),
+                              tags$h2("Add new document"),
+                              actionButton("add_new_document", "Add a new document",
+                                           icon = icon("plus")),
+                              uiOutput("selectsend_new_document"),
+                              tags$h2("Add new unit"),
+                              textInput("new_unit",  "Unit name"),
+                              uiOutput('add_new_unit')                     
+                              )## close add data tab
+                     )
 }
 
 ## Define server logic
@@ -290,35 +275,33 @@ server <- function(input, output, session) {
         })
 
 
-
+        ## Elements for coding a document
+        output$coding <- renderUI({
+                ## selectInput(inputId = "document_part",
+                ##             label = "Part of the document",
+                ##             choices = c("X","Y","Z"))
+                ## selectInput(inputId = "select_concept_from",
+                ##             label = "Add a relationship from",
+                ##             choices = concepts()
+                ##             ),
+                ## selectInput(inputId = "select_concept_to",
+                ##             label = "to ",
+                ##             choices = concepts()
+                ##             ),
+                ## sliderInput(inputId = "coding_weight",
+                ##             label = "Weight of the coding",
+                ##             min = 1, max = 7, value = 1, step = 1),
+                ## radioButtons(inputId = "coding_sign",
+                ##              label = "Sign of the coding",
+                ##              choices = c("-", "+"), selected = "+", inline = TRUE),
+                ## selectInput(inputId = "coding_class",
+                ##             label = "Classe(s) of the coding",
+                ##             choices = c("A","B","C"))
+        })
+        
         ## Create the text editor
         output$mydocA <- renderUI({
-            list(useShinyjs(),
-                 fluidRow(
-                     column(6,
-                            selectInput(inputId = "document_part",
-                                        label = "Part of the document",
-                                        choices = c("X","Y","Z")),
-                            selectInput(inputId = "select_concept_from", label = "Add a relationship from",
-                                        choices = concepts()),
-                            selectInput(inputId = "select_concept_to", label = "to ",
-                                        choices = concepts())
-                            ),
-                     column(6,
-                            sliderInput(inputId = "coding_weight",
-                                        label = "Weight of the coding",
-                                        min = 1, max = 7, value = 1, step = 1),
-                            radioButtons(inputId = "coding_sign",
-                                         label = "Sign of the coding",
-                                         choices = c("-", "+"), selected = "+", inline = TRUE),
-                            selectInput(inputId = "coding_class",
-                                        label = "Classe(s) of the coding",
-                                        choices = c("A","B","C"))
-                            )
-                 ),
-
-                 actionButton("replace", "Add selected code"),
-                 
+            list(useShinyjs(),               
                  aceEditor(
                      editor_name,
                      value = doc(),
