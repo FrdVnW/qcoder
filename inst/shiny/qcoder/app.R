@@ -54,10 +54,6 @@ if (interactive()) {
                                               )
                                      )## close document sub-tabset
                          ),## close editor tab panel
-                tabPanel("Codings",
-                         dataTableOutput('coding_table')
-
-                         ),## close codes tab panel
                  tabPanel("Concpets",
                          dataTableOutput('concept_table')
 
@@ -66,10 +62,10 @@ if (interactive()) {
                          dataTableOutput('code_table')
 
                          ),## close codes tab panel
-                ## tabPanel("Add Code",
-                ##         actionButton("submitNewCode", "Submit")
+                tabPanel("Codings",
+                         dataTableOutput('coding_table')
 
-                                        #),## close add code panel
+                         ),## close codes tab panel
                 tabPanel("Coded data",
                          ## Button
                          downloadButton("download_coded", "Download the table ('.csv')"),
