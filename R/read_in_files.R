@@ -289,6 +289,7 @@ import_project_data <- function(project_name){
   read_raw_data(project_name = project_name)
   read_code_data(project_name = project_name)
   read_concept_data(project_name = project_name)
+  create_empty_coding_file(project_name = project_name)
   read_unit_data(project_name = project_name)
   read_unit_document_map_data(project_name = project_name)
 }
