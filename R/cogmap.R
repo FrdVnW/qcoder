@@ -191,19 +191,20 @@ add_new_coding <- function(concept_from, concept_to,
 #' @export
 create_qcoder_cogmap_project <- function(project_name, sample = FALSE){
   dir.create(project_name)
-  dir.create(paste0(project_name, "/documents"))
-  dir.create(paste0(project_name, "/codes"))
-  dir.create(paste0(project_name, "/concepts"))
-  dir.create(paste0(project_name, "/data_frames"))
-  dir.create(paste0(project_name, "/units"))
-  dir.create(paste0(project_name, "/images"))
-  dir.create(paste0(project_name, "/media"))
-  dir.create(paste0(project_name, "/memos"))
-  dir.create(paste0(project_name, "/misc"))
+  dir.create(paste0(project_name, "/documents"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/codes"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/concepts"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/data_frames"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/units"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/images"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/media"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/memos"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/misc"),showWarnings=FALSE)
   if (sample){
-    examples <- list.files(system.file("Example_Data_CogMap",  package = "qcoder"))
-    file.copy(from = examples,
-              paste0(project_name), recursive = TRUE )
+      examples <- list.files(system.file("Example_Data_CogMap",  package = "qcoder"))
+      examples <- paste0(system.file("Example_Data_CogMap",  package = "qcoder"), "/", examples)
+      file.copy(from = examples,
+                paste0('./',project_name), recursive = TRUE )
   }
 
   invisible(TRUE)
