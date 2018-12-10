@@ -188,6 +188,7 @@ add_new_coding <- function(concept_from, concept_to,
 #'                      current working directory or a path to a project folder.
 #' @param sample Logical that indicates that the sample data should be copied to the project.
 #' @examples create_qcoder_project(project_name = "my_qcoder_project")
+#' 
 #' @export
 create_qcoder_cogmap_project <- function(project_name, sample = FALSE){
   dir.create(project_name)
