@@ -21,13 +21,17 @@ if (interactive()) {
     ## Define UI for application
     ui <- navbarPage("Qcoder",
                      theme = shinytheme("flatly"),
-                     header = list(tags$p("Select your project folder"),
-                            verbatimTextOutput("project_directory"),
-                            shinyDirButton('select_project', label="Select Folder", title="Select your project folder",
-                                           buttonType = "default", class = NULL),
-                            actionButton("update", "Reload project for data updating",
-                                         icon = icon("refresh"))
-                            ), ## close header
+                     header = list(
+                         verbatimTextOutput("project_directory"),
+                         shinyDirButton('select_project',
+                                        label="Select your project folder",
+                                        title="Select your project folder",
+                                        buttonType = "default", class = NULL),
+                         actionButton("update", "Reload project for data updating",
+                                      icon = icon("refresh")
+                                      ),
+                         tags$br(), tags$br()
+                     ), ## close header
                      tabPanel("Coding documents",
                               sidebarLayout(
                                   sidebarPanel(
@@ -51,41 +55,68 @@ if (interactive()) {
                                   )## close main panel
                               )## close sidebarLayout
                               ),# close editor tab panel
-                     navbarMenu("Tables",
+                     navbarMenu("Data",
+                                tabPanel("Documents",
+                                         sidebarLayout(
+                                             sidebarPanel(
+                                                 tags$h2("Add new document"),
+                                                 actionButton("add_new_document",
+                                                              "Add a new document",
+                                                              icon = icon("plus")),
+                                                 uiOutput("selectsend_new_document")
+                                             ),## close add data tab
+                                             mainPanel(
+                                                 'The documents?'
+                                             )
+                                         )
+                                         ),
                                 tabPanel("Concpets",
-                                         dataTableOutput('concept_table')
+                                         sidebarLayout(
+                                             sidebarPanel(
+                                                 tags$h2("Add new concept"),
+                                                 uiOutput("addsubmit_new_concept")
+                                             ),## close add data tab
+                                             mainPanel(
+                                                 dataTableOutput('concept_table')
+                                             )
+                                         )
                                          ),## close codes tab panel
                                 tabPanel("Codes",
-                                         dataTableOutput('code_table')
+                                         sidebarLayout(
+                                             sidebarPanel(
+                                                 tags$h2("Add new code"),
+                                                 uiOutput("addsubmit_new_code")
+                                             ),## close add data tab
+                                             mainPanel(
+                                                 dataTableOutput('code_table')
+                                             )
+                                         )
                                          ),## close codes tab panel
                                 tabPanel("Codings",
                                          dataTableOutput('coding_table')
                                          ),## close codes tab panel
                                 tabPanel("Coded data",
                                          ## Button
-                                         downloadButton("download_coded", "Download the table ('.csv')"),
+                                         downloadButton("download_coded",
+                                                        "Download the table ('.csv')"),
                                          dataTableOutput('coded')
                                          ),## close coded tab panel
                                 tabPanel("Units",
-                                         dataTableOutput('units_table')
+                                         sidebarLayout(
+                                             sidebarPanel(
+                                                 tags$h2("Add new unit"),
+                                                 textInput("new_unit",  "Unit name"),
+                                                 uiOutput('add_new_unit')
+                                             ),## close add data tab
+                                             mainPanel(
+                                                 dataTableOutput('units_table')
+                                             )
+                                         )
                                          ),## close units panel
                                 tabPanel("Summary",
                                          dataTableOutput('code_freq')
                                          )
-                                ),
-                     tabPanel("Add data",
-                              tags$h2("Add new concept"),
-                              uiOutput("addsubmit_new_concept"),
-                              tags$h2("Add new code"),
-                              uiOutput("addsubmit_new_code"),
-                              tags$h2("Add new document"),
-                              actionButton("add_new_document", "Add a new document",
-                                           icon = icon("plus")),
-                              uiOutput("selectsend_new_document"),
-                              tags$h2("Add new unit"),
-                              textInput("new_unit",  "Unit name"),
-                              uiOutput('add_new_unit')                     
-                              )## close add data tab
+                                )
                      )
 }
 
