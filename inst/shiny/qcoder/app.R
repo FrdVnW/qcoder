@@ -310,7 +310,7 @@ server <- function(input, output, session) {
         output$coding <- renderUI({
             list(selectInput(inputId = "document_part",
                              label = "Part of the document",
-                             choices = c("X","Y","Z")),
+                             choices = project_document_part),
                  selectInput(inputId = "select_concept_from",
                              label = "Add a relationship from",
                              choices = concepts()
@@ -327,7 +327,7 @@ server <- function(input, output, session) {
                               choices = c("-", "+"), selected = "+", inline = TRUE),
                  selectInput(inputId = "coding_class",
                              label = "Classe(s) of the coding",
-                             choices = c("A","B","C"))
+                             choices = project_coding_class)
                  )
         })
         
