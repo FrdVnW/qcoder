@@ -277,26 +277,27 @@ server <- function(input, output, session) {
 
         ## Elements for coding a document
         output$coding <- renderUI({
-                ## selectInput(inputId = "document_part",
-                ##             label = "Part of the document",
-                ##             choices = c("X","Y","Z"))
-                ## selectInput(inputId = "select_concept_from",
-                ##             label = "Add a relationship from",
-                ##             choices = concepts()
-                ##             ),
-                ## selectInput(inputId = "select_concept_to",
-                ##             label = "to ",
-                ##             choices = concepts()
-                ##             ),
-                ## sliderInput(inputId = "coding_weight",
-                ##             label = "Weight of the coding",
-                ##             min = 1, max = 7, value = 1, step = 1),
-                ## radioButtons(inputId = "coding_sign",
-                ##              label = "Sign of the coding",
-                ##              choices = c("-", "+"), selected = "+", inline = TRUE),
-                ## selectInput(inputId = "coding_class",
-                ##             label = "Classe(s) of the coding",
-                ##             choices = c("A","B","C"))
+            list(selectInput(inputId = "document_part",
+                             label = "Part of the document",
+                             choices = c("X","Y","Z")),
+                 selectInput(inputId = "select_concept_from",
+                             label = "Add a relationship from",
+                             choices = concepts()
+                             ),
+                 selectInput(inputId = "select_concept_to",
+                             label = "to ",
+                             choices = concepts()
+                             ),
+                 sliderInput(inputId = "coding_weight",
+                             label = "Weight of the coding",
+                             min = 1, max = 7, value = 1, step = 1),
+                 radioButtons(inputId = "coding_sign",
+                              label = "Sign of the coding",
+                              choices = c("-", "+"), selected = "+", inline = TRUE),
+                 selectInput(inputId = "coding_class",
+                             label = "Classe(s) of the coding",
+                             choices = c("A","B","C"))
+                 )
         })
         
         ## Create the text editor

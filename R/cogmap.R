@@ -182,3 +182,29 @@ add_new_coding <- function(concept_from, concept_to,
     
 }
 
+#' Create a standard set of folders for a QCoder project for Cognitive Mapping
+#'
+#' @param project_name  A string project name to be located in the
+#'                      current working directory or a path to a project folder.
+#' @param sample Logical that indicates that the sample data should be copied to the project.
+#' @examples create_qcoder_project(project_name = "my_qcoder_project")
+#' @export
+create_qcoder_cogmap_project <- function(project_name, sample = FALSE){
+  dir.create(project_name)
+  dir.create(paste0(project_name, "/documents"))
+  dir.create(paste0(project_name, "/codes"))
+  dir.create(paste0(project_name, "/concepts"))
+  dir.create(paste0(project_name, "/data_frames"))
+  dir.create(paste0(project_name, "/units"))
+  dir.create(paste0(project_name, "/images"))
+  dir.create(paste0(project_name, "/media"))
+  dir.create(paste0(project_name, "/memos"))
+  dir.create(paste0(project_name, "/misc"))
+  if (sample){
+    examples <- list.files(system.file("Example_Data_CogMap",  package = "qcoder"))
+    file.copy(from = examples,
+              paste0(project_name), recursive = TRUE )
+  }
+
+  invisible(TRUE)
+}
