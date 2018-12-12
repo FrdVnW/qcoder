@@ -94,7 +94,7 @@ add_new_concept <- function(new_concept = "" , concept.description = "" , concep
     concept <- setdiff(new_concept, old_concepts)
     if (length(concept) > 0){
         concept_id <- max(concept_data_frame$concept_id)
-        new_rows <- data.frame(concept_id, concept, concept.description, concept.classe)
+        new_rows <- data.frame(concept_id, concept, concept.description, concept.class)
 
         concept_data_frame <- rbind(concept_data_frame, new_rows)
 
