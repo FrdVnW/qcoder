@@ -252,9 +252,10 @@ server <- function(input, output, session) {
                     textInput("new_concept_description",
                               label = "Description"
                               ),
-                    textInput("new_concept_class",
-                              label = "Class of the concept"
-                              ),
+                    selectInput(inputId = "new_concept_class",
+                             label = "Class of the concept",
+                             choices = project_concept_class
+                             ),
                     actionButton("submit_new_concept", "Submit new concept",
                                  icon = icon("share-square"))
                 )
@@ -263,8 +264,10 @@ server <- function(input, output, session) {
         })
         
         observeEvent(input$submit_new_concept, {
-            req(input$new_concept,input$new_concept_description)
-            project_status$addingconcept=FALSE
+            req(input$new_concept,
+                input$new_concept_description,
+                intput$new_concept_class)
+            project_status$addingconcept = FALSE
             x <- readRDS(concepts_df_path)
             qcoder::add_new_concept(input$new_concept,
                                     input$new_concept_description,
