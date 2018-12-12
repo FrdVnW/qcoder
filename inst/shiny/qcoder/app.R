@@ -466,7 +466,10 @@ server <- function(input, output, session) {
 
     
     update_editor <- observeEvent(input$replace, {
-        select_code <- paste(input$select_concept_from,input$select_concept_to,sep=">")
+        select_code <- paste(input$select_concept_from,
+                             input$select_concept_to,
+                             sep=">")
+        
         x <- readRDS(codes_df_path)
         if (!(select_code %in% x$code)) {
             qcoder::add_new_code(select_code,
