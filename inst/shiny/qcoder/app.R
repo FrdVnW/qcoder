@@ -157,9 +157,10 @@ server <- function(input, output, session) {
                                    "/data_frames/qcoder_unit_document_map_",
                                    basename(project_path), ".rds")
 
-        project_status <- reactiveValues(saved=TRUE,
-                                         addingcode=FALSE,
-                                         addingconcept=FALSE
+        project_status <- reactiveValues(saved = TRUE,
+                                         addingcode = FALSE,
+                                         addingconcept = FALSE,
+                                         working_doc_id = NA
                                          )
         
         ## coding_status <- reactiveValues(select_code="none")
@@ -178,7 +179,13 @@ server <- function(input, output, session) {
             if (input$select_project[1] == ""){return()}
 
             if (docs_df_path == "") {return()}
-            selectInput('this_doc_path', 'Document', my_choices())
+                selectInput('this_doc_path', 'Document', my_choices())
+        })
+        observeEvent(input$this_doc_path,{
+            project_status$working_doc_id <- readRDS(file = docs_df_path) %>%
+                dplyr::filter(doc_path == input$this_doc_path) %>%
+                dplyr::select(doc_id) %>%
+                pull()
         })
 
         output$saveButton <- renderUI({
@@ -444,7 +451,8 @@ server <- function(input, output, session) {
             input$document_part,
             input$selected)
         x <- readRDS(codings_df_path)
-        qcoder::add_new_coding(input$select_concept_from,
+        qcoder::add_new_coding(project_status$working_doc_id,
+                               input$select_concept_from,
                                input$select_concept_to,
                                input$coding_sign,
                                input$coding_weight,

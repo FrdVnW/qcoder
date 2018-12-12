@@ -133,6 +133,7 @@ create_empty_coding_file <- function(data_frame_name = "qcoder_codings",
     }
 
     cn <- c("coding_id",
+            "doc_id",
             "concept_from",
             "concept_to",
             "coding_sign",
@@ -143,6 +144,7 @@ create_empty_coding_file <- function(data_frame_name = "qcoder_codings",
     coding_data <- as.data.frame(matrix(data = NA, 0, length(cn)))
     colnames(coding_data) <- cn
     coding_data$coding_id <- as.numeric(coding_data$coding_id)
+    coding_data$doc_id <- as.numeric(coding_data$doc_id)
     coding_data$concept_from <- as.numeric(coding_data$concept_from)
     coding_data$concept_to <- as.numeric(coding_data$concept_to)
     coding_data$coding_sign <- as.factor(coding_data$coding_sign)
@@ -161,13 +163,13 @@ create_empty_coding_file <- function(data_frame_name = "qcoder_codings",
 #' @param codings_df_path The path where the updated coding data frame should be saved
 #'
 #' @export
-add_new_coding <- function(concept_from, concept_to, 
+add_new_coding <- function(doc_id, concept_from, concept_to, 
                            coding_sign, coding_weight, coding_class, 
                            document_part, selected_text,
                            coding_data_frame = NULL , codings_df_path = ""){
     coding_data_frame <- as.data.frame(coding_data_frame)
     coding_id <- dim(coding_data_frame)[1]+1
-    new_rows <- data.frame(coding_id, concept_from, concept_to, 
+    new_rows <- data.frame(coding_id, doc_id, concept_from, concept_to, 
                            coding_sign, coding_weight, coding_class,
                            document_part, selected_text)
 
