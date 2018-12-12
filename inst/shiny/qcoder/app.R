@@ -218,6 +218,8 @@ server <- function(input, output, session) {
         comps[["tags"]] <- c("QCODE",  "{#")
 
         concepts <- reactive({
+            input$update
+            input$submit_new_concept
             if (concepts_df_path == "") {return()}
             concept_df <- readRDS(concepts_df_path)
             concept_l <- as.list(as.character(concept_df[["concept_id"]]))
