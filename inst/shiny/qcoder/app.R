@@ -451,15 +451,17 @@ server <- function(input, output, session) {
             input$document_part,
             input$selected)
         x <- readRDS(codings_df_path)
-        qcoder::add_new_coding(input$this_doc_path,## project_status$working_doc_id,
-                               input$select_concept_from,
-                               input$select_concept_to,
-                               input$coding_sign,
-                               input$coding_weight,
-                               input$coding_class,
-                               input$document_part,
-                               input$selected,
-                               x, codings_df_path)
+        doc <- readRDS(docs_df_path)
+        qcoder::add_new_coding(
+                    doc$doc_id[doc$doc_path == input$this_doc_path],
+                    input$select_concept_from,
+                    input$select_concept_to,
+                    input$coding_sign,
+                    input$coding_weight,
+                    input$coding_class,
+                    input$document_part,
+                    input$selected,
+                    x, codings_df_path)
     })
 
     
