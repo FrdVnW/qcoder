@@ -87,21 +87,16 @@ create_empty_concept_file <- function( data_frame_name = "qcoder_concepts",
 #' @param concepts_df_path The path where the updated concept data frame should be saved
 #'
 #' @export
-add_new_concept <- function(new_concept = "" , description = "" , concept_data_frame = NULL , concepts_df_path = "" ){
+add_new_concept <- function(new_concept = "" , concept.description = "" , concept.class = "" , concept_data_frame = NULL , concepts_df_path = "" ){
     concept_data_frame <- as.data.frame(concept_data_frame)
     old_concepts <- as.character(concept_data_frame[,"concept"])
     new_concept <- unique(new_concept)
     concept <- setdiff(new_concept, old_concepts)
     if (length(concept) > 0){
-        concept_id <- integer(length(concept))
-        concept.description <- description
-        new_rows <- data.frame(concept_id, concept, concept.description)
+        concept_id <- max(concept_data_frame$concept_id)
+        new_rows <- data.frame(concept_id, concept, concept.description, concept.classe)
 
         concept_data_frame <- rbind(concept_data_frame, new_rows)
-        row_n <- row.names(concept_data_frame)
-        concept_data_frame$concept_id[length(old_concepts):
-                                      (length(old_concepts) + length(concept))] <-
-            row_n[length(old_concepts):(length(old_concepts) + length(concept))]
 
         saveRDS(concept_data_frame, file = concepts_df_path )
     }

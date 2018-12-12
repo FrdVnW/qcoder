@@ -252,6 +252,9 @@ server <- function(input, output, session) {
                     textInput("new_concept_description",
                               label = "Description"
                               ),
+                    textInput("new_concept_class",
+                              label = "Class of the concept"
+                              ),
                     actionButton("submit_new_concept", "Submit new concept",
                                  icon = icon("share-square"))
                 )
@@ -265,6 +268,7 @@ server <- function(input, output, session) {
             x <- readRDS(concepts_df_path)
             qcoder::add_new_concept(input$new_concept,
                                     input$new_concept_description,
+                                    intput$new_concept_class,
                                     x, concepts_df_path)
         })
 
