@@ -440,16 +440,16 @@ server <- function(input, output, session) {
             input$select_concept_to,
             input$coding_sign,
             input$coding_weight,
-            input$document_part,
             input$coding_class,
+            input$document_part,
             input$selected)
         x <- readRDS(codings_df_path)
         qcoder::add_new_coding(input$select_concept_from,
                                input$select_concept_to,
                                input$coding_sign,
                                input$coding_weight,
-                               input$document_part,
                                input$coding_class,
+                               input$document_part,
                                input$selected,
                                x, codings_df_path)
     })
