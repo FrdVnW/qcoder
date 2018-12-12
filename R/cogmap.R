@@ -162,14 +162,14 @@ create_empty_coding_file <- function(data_frame_name = "qcoder_codings",
 #'
 #' @export
 add_new_coding <- function(concept_from, concept_to, 
-                           coding_sign, coding_weight, coding_class,
-                           document_part, selected_text,
+                           coding_sign, coding_weight, document_part,
+                           coding_class, selected_text,
                            coding_data_frame = NULL , codings_df_path = ""){
     coding_data_frame <- as.data.frame(coding_data_frame)
     coding_id <- dim(coding_data_frame)[1]+1
     new_rows <- data.frame(coding_id, concept_from, concept_to, 
-                           coding_sign, coding_weight, coding_class,
-                           document_part, selected_text)
+                           coding_sign, coding_weight, document_part, 
+                           coding_class, selected_text)
 
     coding_data_frame <- rbind(coding_data_frame, new_rows)
 
