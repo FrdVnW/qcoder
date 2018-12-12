@@ -266,12 +266,12 @@ server <- function(input, output, session) {
         observeEvent(input$submit_new_concept, {
             req(input$new_concept,
                 input$new_concept_description,
-                intput$new_concept_class)
+                input$new_concept_class)
             project_status$addingconcept = FALSE
             x <- readRDS(concepts_df_path)
             qcoder::add_new_concept(input$new_concept,
                                     input$new_concept_description,
-                                    intput$new_concept_class,
+                                    input$new_concept_class,
                                     x, concepts_df_path)
         })
 
