@@ -5,9 +5,9 @@
 \title{Update codings data frame with description
 Add coding to the codings data frame}
 \usage{
-add_new_coding(concept_from, concept_to, coding_sign, coding_weight,
-  coding_class, document_part, selected_text, coding_data_frame = NULL,
-  codings_df_path = "")
+add_new_coding(doc_id, concept_from, concept_to, coding_sign,
+  coding_weight, coding_class, document_part, selected_text,
+  coding_data_frame = NULL, codings_df_path = "")
 }
 \arguments{
 \item{coding_data_frame}{Existing data frame of QCODER codings}

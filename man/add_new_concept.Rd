@@ -5,8 +5,9 @@
 \title{Update concepts data frame with description
 Add concept to the concepts data frame}
 \usage{
-add_new_concept(new_concept = "", description = "",
-  concept_data_frame = NULL, concepts_df_path = "")
+add_new_concept(new_concept = "", concept.description = "",
+  concept.class = "", concept_data_frame = NULL,
+  concepts_df_path = "")
 }
 \arguments{
 \item{new_concept}{The name of a concept (usually from a add concept form)}

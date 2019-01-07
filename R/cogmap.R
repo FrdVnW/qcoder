@@ -198,6 +198,7 @@ create_qcoder_cogmap_project <- function(project_name, sample = FALSE){
   dir.create(project_name)
   dir.create(paste0(project_name, "/documents"),showWarnings=FALSE)
   dir.create(paste0(project_name, "/codes"),showWarnings=FALSE)
+  dir.create(paste0(project_name, "/codings"),showWarnings=FALSE)
   dir.create(paste0(project_name, "/concepts"),showWarnings=FALSE)
   dir.create(paste0(project_name, "/data_frames"),showWarnings=FALSE)
   dir.create(paste0(project_name, "/units"),showWarnings=FALSE)
