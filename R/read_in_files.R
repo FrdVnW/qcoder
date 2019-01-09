@@ -31,17 +31,17 @@ read_raw_data <- function(folder_path = "/documents/",
      file_list <- dir(folder_path)
       doc_text  <- character()
       # This is because not all users will be able to install textreadr.
-      if (!requireNamespace("textreadr", quietly = TRUE)){
+      ## if (!requireNamespace("textreadr", quietly = TRUE)){
         for (i in 1:length(file_list)){
           doc_text[i] <- readr::read_file(paste0(folder_path, file_list[i]))
         }
-      } else {
-        for (i in 1:length(file_list)){
-           doc_text[i] <- textreadr::read_document(
-                                  paste0( folder_path, file_list[i]),
-                                  combine = TRUE)
-        }
-      }
+      ## } else {
+      ##   for (i in 1:length(file_list)){
+      ##      doc_text[i] <- textreadr::read_document(
+      ##                             paste0( folder_path, file_list[i]),
+      ##                             combine = TRUE)
+      ##   }
+      ## }
     } else {
       return(sprintf("Filepath %s does not exist", folder_path))
     }
