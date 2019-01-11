@@ -31,6 +31,14 @@ read_concept_data <- function(file_path = "concepts/concepts.csv", concepts_df_p
                                         col_types = readr::cols(concept_id = "i",
                                                                 concept = "c",
                                                                 concept.description = "c"))
+        concept_data <- readr::read_csv2(
+                           file = file_path,
+                           col_types = readr::cols(
+                                                  concept_id = "i",
+                                                  concept = "c",
+                                                  concept.description = "c",
+                                                  concept.class = "c")
+                           )
                                         # validate column names etc here
         concept_data$concept <- as.factor(concept_data$concept)
                                         # try catch this save
@@ -137,7 +145,7 @@ create_empty_coding_file <- function(data_frame_name = "qcoder_codings",
             "concept_from",
             "concept_to",
             "coding_sign",
-            "coding_weight",  
+            "coding_weight",
             "coding_class",
             "document_part",
             "selected_text")
@@ -163,8 +171,8 @@ create_empty_coding_file <- function(data_frame_name = "qcoder_codings",
 #' @param codings_df_path The path where the updated coding data frame should be saved
 #'
 #' @export
-add_new_coding <- function(doc_id, concept_from, concept_to, 
-                           coding_sign, coding_weight, coding_class, 
+add_new_coding <- function(doc_id, concept_from, concept_to,
+                           coding_sign, coding_weight, coding_class,
                            document_part, selected_text,
                            coding_data_frame = NULL , codings_df_path = ""){
     coding_data_frame <- as.data.frame(coding_data_frame)
@@ -172,7 +180,7 @@ add_new_coding <- function(doc_id, concept_from, concept_to,
     new_rows <- data.frame(coding_id,
                            doc_id,
                            concept_from,
-                           concept_to, 
+                           concept_to,
                            coding_sign,
                            coding_weight,
                            coding_class,
@@ -183,7 +191,7 @@ add_new_coding <- function(doc_id, concept_from, concept_to,
     coding_data_frame <- rbind(coding_data_frame, new_rows)
 
     saveRDS(coding_data_frame, file = codings_df_path )
-    
+
 }
 
 #' Create a standard set of folders for a QCoder project for Cognitive Mapping
@@ -192,7 +200,7 @@ add_new_coding <- function(doc_id, concept_from, concept_to,
 #'                      current working directory or a path to a project folder.
 #' @param sample Logical that indicates that the sample data should be copied to the project.
 #' @examples create_qcoder_project(project_name = "my_qcoder_project")
-#' 
+#'
 #' @export
 create_qcoder_cogmap_project <- function(project_name, sample = FALSE){
   dir.create(project_name)
