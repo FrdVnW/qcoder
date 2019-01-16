@@ -259,7 +259,8 @@ server <- function(input, output, session) {
                               label = "New concept"
                               ),
                     textInput("new_concept_description",
-                              label = "Description"
+                              label = "Description",
+                              "NA"
                               ),
                     selectInput(inputId = "new_concept_class",
                              label = "Class of the concept",
