@@ -194,7 +194,7 @@ server <- function(input, output, session) {
             } else {
                 saving.alert <- "exclamation-triangle"
             }        
-            actionButton("submit", "Save changes",icon= icon(saving.alert))
+            actionButton("submit", "Save changes (docs) & Backup codings",icon= icon(saving.alert))
         })
 
         observeEvent(input$submit,{
