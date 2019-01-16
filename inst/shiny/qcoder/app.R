@@ -515,6 +515,11 @@ server <- function(input, output, session) {
     }
     )
 
+    backup_codings <- observeEvent(input$submit,
+    {
+        qcoder::do_update_codings()
+    }
+    )
 
     ## Adding a new document
     observeEvent(c(input$add_new_document,input$update),{

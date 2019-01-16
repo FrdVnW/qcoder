@@ -215,3 +215,18 @@ create_qcoder_cogmap_project <- function(project_name, sample = FALSE){
 
   invisible(TRUE)
 }
+
+#' Update codings
+#' Updates the codings when 'SAVE'
+#'
+#' @export
+do_update_codings <- function(){
+  codings_df <- readRDS(codings_df_path)
+  # Make an archive of the unchanged data
+  time <- gsub(" ", "_", Sys.time())
+  time <- gsub(":", "_", time)
+  time <-gsub("-", "_", time)
+  archive_path <- sub(".rds", paste0("_", time, ".rds"), codings_df_path)
+  saveRDS(codings_df, archive_path)
+  invisible(TRUE)
+}
