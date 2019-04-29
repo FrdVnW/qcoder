@@ -37,7 +37,14 @@ if (interactive()) {
                                   sidebarPanel(
                                       uiOutput('choices'),
                                       uiOutput('saveButton'),
-                                      uiOutput('coding'),
+                                      uiOutput('docpart'),
+                                      uiOutput('fromclass'),
+                                      uiOutput('from'),
+                                      uiOutput('toclass'),
+                                      uiOutput('to'),
+                                      uiOutput('weight'),
+                                      uiOutput('sign'),
+                                      uiOutput('class'),
                                       actionButton("replace", "Add selected code")
                                   ),## close add data tab
                                   mainPanel(
@@ -224,11 +231,19 @@ server <- function(input, output, session) {
         comps[["codes"]] <- code_df["code"]
         comps[["tags"]] <- c("QCODE",  "{#")
 
-        concepts <- reactive({
+        concepts_df <- reactive({
             input$update
             input$submit_new_concept
             if (concepts_df_path == "") {return()}
             concept_df <- readRDS(concepts_df_path)
+            return(concept_df)
+        })
+
+        concepts <- reactive({
+            input$update
+            input$submit_new_concept
+            if (concepts_df_path == "") {return()}
+            concept_df <- concepts_df()
             concept_l <- as.list(as.character(concept_df[["concept_id"]]))
             names(concept_l)  <- as.character(concept_df[["concept"]])
             return(concept_l)
@@ -239,7 +254,6 @@ server <- function(input, output, session) {
             code_df <- readRDS(codes_df_path)
             return(code_df["code"])
         })
-
         
         ## Adding a new concept
         output$addsubmit_new_concept <- renderUI({
@@ -251,7 +265,7 @@ server <- function(input, output, session) {
             )
         })
         
-        observeEvent(input$add_new_concept,{
+        observeEvent(input$add_new_concept, {
             project_status$addingconcept=TRUE
             output$addsubmit_new_concept <- renderUI({
                 tagList(
@@ -270,9 +284,8 @@ server <- function(input, output, session) {
                                  icon = icon("share-square"))
                 )
             })
-            
         })
-        
+                
         observeEvent(input$submit_new_concept, {
             req(input$new_concept,
                 input$new_concept_description,
@@ -284,7 +297,6 @@ server <- function(input, output, session) {
                                     input$new_concept_class,
                                     x, concepts_df_path)
         })
-
         
         ## Adding a new code
         output$addsubmit_new_code <- renderUI({
@@ -322,30 +334,85 @@ server <- function(input, output, session) {
                                  x, codes_df_path)
         })
 
-
+        concepts_classes <- reactive({
+            input$update
+            input$submit_new_concept
+            if (concepts_df_path == "") {return()}
+            concepts_df <- concepts_df()
+            return(concepts_df$concept.class)
+        })
+        
+        concepts_from <- reactive({
+            input$update
+            input$submit_new_concept
+            ## input$select_concept_from_class
+            if (concepts_df_path == "") {return()}
+            concept_df <- concepts_df() %>%
+                dplyr::filter(concept.class %in% input$select_concept_from_class)
+            concept_l <- as.list(as.character(concept_df[["concept_id"]]))
+            names(concept_l)  <- as.character(concept_df[["concept"]])
+            return(concept_l)
+        })
+        
+        concepts_to <- reactive({
+            input$update
+            input$submit_new_concept
+            ## input$select_concept_to_class
+            if (concepts_df_path == "") {return()}
+            concept_df <- concepts_df() %>%
+                dplyr::filter(concept.class %in% input$select_concept_to_class)
+            concept_l <- as.list(as.character(concept_df[["concept_id"]]))
+            names(concept_l)  <- as.character(concept_df[["concept"]])
+            return(concept_l)
+        })
+        
+        
         ## Elements for coding a document
-        output$coding <- renderUI({
-            list(selectInput(inputId = "document_part",
-                             label = "Part of the document",
-                             choices = project_document_part),
-                 selectInput(inputId = "select_concept_from",
-                             label = "Add a relationship from",
-                             choices = concepts()
-                             ),
-                 selectInput(inputId = "select_concept_to",
-                             label = "to ",
-                             choices = concepts()
-                             ),
-                 sliderInput(inputId = "coding_weight",
-                             label = "Weight of the coding",
-                             min = 1, max = 7, value = 1, step = 1),
-                 radioButtons(inputId = "coding_sign",
-                              label = "Sign of the coding",
-                              choices = c("-", "+"), selected = "+", inline = TRUE),
-                 selectInput(inputId = "coding_class",
-                             label = "Classe(s) of the coding",
-                             choices = project_coding_class)
-                 )
+        output$docpart <- renderUI({
+            selectInput(inputId = "document_part",
+                        label = "Part of the document",
+                        choices = project_document_part)
+        })
+        output$fromclass <- renderUI({
+            selectInput(inputId = "select_concept_from_class",
+                        label = "Add a relationship from (class) ",
+                        choices = concepts_classes()
+                        )
+        })
+        output$from <- renderUI({
+            selectInput(inputId = "select_concept_from",
+                        label = "Add a relationship from",
+                        choices = concepts_from()
+                        )
+        })
+        output$toclass <- renderUI({
+            selectInput(inputId = "select_concept_to_class",
+                        label = "Add a relationship to (class) ",
+                        choices = concepts_classes()
+                        )
+        })
+        output$to <- renderUI({
+            selectInput(inputId = "select_concept_to",
+                        label = "to ",
+                        choices = concepts_to()
+                        )
+        })
+        output$weight <- renderUI({
+            sliderInput(inputId = "coding_weight",
+                        label = "Weight of the coding",
+                        min = 1, max = 7, value = 1, step = 1)
+            })
+        output$sign <- renderUI({
+            radioButtons(inputId = "coding_sign",
+                         label = "Sign of the coding",
+                         choices = c("-", "+"),
+                         selected = "+",
+                         inline = TRUE)
+            })
+        output$class <- renderUI({
+            selectInput(inputId = "coding_class",
+                        label = "Classe(s) of the coding",
+                        choices = project_coding_class)
         })
         
         ## Create the text editor
