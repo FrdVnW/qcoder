@@ -37,7 +37,7 @@ if (interactive()) {
                                   sidebarPanel(
                                       uiOutput('choices'),
                                       uiOutput('saveButton'),
-                                      uiOutput('docpart'),
+                                      uiOutput('dsect'),
                                       uiOutput('fromclass'),
                                       uiOutput('from'),
                                       uiOutput('toclass'),
@@ -348,7 +348,7 @@ server <- function(input, output, session) {
             ## input$select_concept_from_class
             if (concepts_df_path == "") {return()}
             concept_df <- concepts_df() %>%
-                dplyr::filter(concept.class %in% input$select_concept_from_class)
+                dplyr::filter(concept.class %in% input$select_conceptclass_from)
             concept_l <- as.list(as.character(concept_df[["concept_id"]]))
             names(concept_l)  <- as.character(concept_df[["concept"]])
             return(concept_l)
@@ -360,7 +360,7 @@ server <- function(input, output, session) {
             ## input$select_concept_to_class
             if (concepts_df_path == "") {return()}
             concept_df <- concepts_df() %>%
-                dplyr::filter(concept.class %in% input$select_concept_to_class)
+                dplyr::filter(concept.class %in% input$select_conceptclass_to)
             concept_l <- as.list(as.character(concept_df[["concept_id"]]))
             names(concept_l)  <- as.character(concept_df[["concept"]])
             return(concept_l)
@@ -368,13 +368,13 @@ server <- function(input, output, session) {
         
         
         ## Elements for coding a document
-        output$docpart <- renderUI({
+        output$dsect <- renderUI({
             selectInput(inputId = "document_part",
-                        label = "Part of the document",
+                        label = "Section of the document",
                         choices = project_document_part)
         })
         output$fromclass <- renderUI({
-            selectInput(inputId = "select_concept_from_class",
+            selectInput(inputId = "select_conceptclass_from",
                         label = "Add a relationship from (class) ",
                         choices = concepts_classes()
                         )
@@ -386,7 +386,7 @@ server <- function(input, output, session) {
                         )
         })
         output$toclass <- renderUI({
-            selectInput(inputId = "select_concept_to_class",
+            selectInput(inputId = "select_conceptclass_to",
                         label = "Add a relationship to (class) ",
                         choices = concepts_classes()
                         )
@@ -510,7 +510,15 @@ server <- function(input, output, session) {
         input$aceeditor
     })
 
-    observeEvent(input$replace, {          
+    
+    observeEvent(input$replace, {
+        cat(paste(input$select_concept_from,
+            input$select_concept_to,
+            input$coding_sign,
+            input$coding_weight,
+            input$coding_class,
+            input$document_part,
+            input$selected, sep = "----"))
         req(input$select_concept_from,
             input$select_concept_to,
             input$coding_sign,
