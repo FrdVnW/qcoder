@@ -286,18 +286,30 @@ create_unit_doc_file <- function(file_path = "data_frames",
 #'                     holding the project.
 #' @export
 import_project_data <- function(project_name){
-    if (dir.exists(paste0("./",project_name,"/data_frames"))) {
-        time <- gsub(" ", "_", Sys.time())
-        time <- gsub(":", "", time)
-        time <-gsub("-", "", time)
-        archive_path <- paste0("./",project_name,"/backup","_", time)
-        dir.create(archive_path)
-        file.copy(paste0("./",project_name,"/data_frames"), archive_path, recursive=TRUE)
+    if (interactive() ){
+        raw <- readline(paste0(
+            "\n\n Are you sure you want to import project (yes / no)", project_name,
+            "/ ? \n\n ===> This has to be done only with new project/new phase. <=== \n",
+            "It will erase coding work done in the project !!"))
+        if (raw %in% c("T", TRUE, "True", "Yes", "yes", "Oui", "oui")){
+            if (dir.exists(paste0("./",project_name,"/data_frames"))) {
+                time <- gsub(" ", "_", Sys.time())
+                time <- gsub(":", "", time)
+                time <-gsub("-", "", time)
+                archive_path <- paste0("./",project_name,"/backup","_", time)
+                dir.create(archive_path)
+                file.copy(paste0("./",project_name,"/data_frames"), archive_path, recursive=TRUE)
+            }
+            read_raw_data(project_name = project_name)
+            read_code_data(project_name = project_name)
+            read_concept_data(project_name = project_name)
+            create_empty_coding_file(project_name = project_name)
+            read_unit_data(project_name = project_name)
+            read_unit_document_map_data(project_name = project_name)
+            cat("\n\n Project imported \n\n")
+        } else {
+            cat("\n\n No project imported \n\n")
+        }
+        rm(raw)
     }
-  read_raw_data(project_name = project_name)
-  read_code_data(project_name = project_name)
-  read_concept_data(project_name = project_name)
-  create_empty_coding_file(project_name = project_name)
-  read_unit_data(project_name = project_name)
-  read_unit_document_map_data(project_name = project_name)
 }
