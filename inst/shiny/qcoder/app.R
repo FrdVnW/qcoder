@@ -51,7 +51,9 @@ if (interactive()) {
                                       tabsetPanel(id = "subTabPanel1",
                                                   tabPanel("Edit",
                                                            uiOutput('mydocA'),
-                                                           uiOutput("addsubmit_new_concept")),
+                                                           tags$h2("Add new concept"),
+                                                           uiOutput("addsubmit_new_concept")
+                                                           ),
                                                   tabPanel("Existing file",
                                                            htmlOutput("this_doc" )
                                                            ),
@@ -78,11 +80,12 @@ if (interactive()) {
                                              )
                                          )
                                          ),
-                                tabPanel("Concpets",
+                                tabPanel("Concepts",
                                          sidebarLayout(
                                              sidebarPanel(
                                                  tags$h2("Add new concept"),
-                                                 uiOutput("addsubmit_new_concept")
+                                                 tags$h3("moved in the main window")
+                                                 ## uiOutput("addsubmit_new_concept")
                                              ),## close add data tab
                                              mainPanel(
                                                  dataTableOutput('concept_table')
