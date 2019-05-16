@@ -50,7 +50,8 @@ if (interactive()) {
                                   mainPanel(
                                       tabsetPanel(id = "subTabPanel1",
                                                   tabPanel("Edit",
-                                                           uiOutput('mydocA')),
+                                                           uiOutput('mydocA'),
+                                                           uiOutput("addsubmit_new_concept")),
                                                   tabPanel("Existing file",
                                                            htmlOutput("this_doc" )
                                                            ),
