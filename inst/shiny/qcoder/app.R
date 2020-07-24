@@ -424,6 +424,7 @@ server <- function(input, output, session) {
             list(useShinyjs(),               
                  aceEditor(
                      editor_name,
+                     outputID = "ace",
                      value = doc(),
                      mode = "markdown",
                      height = "500",
@@ -511,7 +512,7 @@ server <- function(input, output, session) {
 
     ## Functions related to updating the text.
     new_text <- reactive({
-        input$aceeditor
+        input$ace
     })
 
     
@@ -543,30 +544,32 @@ server <- function(input, output, session) {
                     input$selected,
                     x, codings_df_path)
     })
-
     
     update_editor <- observeEvent(input$replace, {
-        select_code <- paste(input$select_concept_from,
+        validate(need(input$select_concept_from, "Concept from must be selected"),
+                 need(input$select_concept_to, "Concept to must be selected"),
+                 need(input$ace_selected, "Did you select some text?"))
+        
+        select_codes <- paste(input$select_concept_from,
                              input$select_concept_to,
                              sep=">")
         
         x <- readRDS(codes_df_path)
-        if (!(select_code %in% x$code)) {
-            qcoder::add_new_code(select_code,
+        if (!(select_codes %in% x$code)) {
+            qcoder::add_new_code(select_codes,
                                  '', ## to be amended or to be define in another function
                                  x, codes_df_path)
         }
         
         text_old <- new_text()
-        codes <- select_code
-        selected <- input$selected
+        codes <- select_codes
+        selected <- input$ace_selected
         if (length(selected) == 0) {return(message("No text selected"))}
 
         updated_selection <- qcoder:::add_codes_to_selection(selection = selected, codes = codes)
-
         updated_text <- qcoder:::replace_selection(text_old, selected, updated_selection)
 
-        updateAceEditor(session=session, editorId=editor_name, value=updated_text)
+        updateAceEditor(session=session, "ace", value = updated_text)
         ## put js code to move cursor here
         jump_to <- input$cursorpos
         ## print(jump_to)
@@ -575,7 +578,7 @@ server <- function(input, output, session) {
 
         ## print(jump_to)
 
-        js_statement <- paste0("editor__",editor_name,".focus(); editor__",editor_name,".gotoLine(", row_num, ",", col_num, ");")
+        js_statement <- paste0("editor__","ace",".focus(); editor__","ace",".gotoLine(", row_num, ",", col_num, ");")
         ## print(js_statement)
 
         shinyjs::runjs(js_statement)
