@@ -134,21 +134,37 @@ if (interactive()) {
 ## Define server logic
 server <- function(input, output, session) {
 
-    ## Select the project directory
-    user_folder <- c('Select Volume' = Sys.getenv("HOME"))
-    if (user_folder != ""){
-        shinyDirChoose(input, 'select_project',  roots = user_folder)
+    # Select the project directory if not using working directory.
+    if (!exists("user_folder")){
+        user_folder <- c('Select Volume' = Sys.getenv("HOME"))
     }
-    observeEvent(c(input$select_project, input$file, input$update),{
-        req(input$select_project)
-        if (input$select_project[1] == ""){return()}
-        output$project_directory <- renderPrint({parseDirPath(user_folder,
-                                                              input$select_project)
-        })
 
-        if (as.character(input$select_project[1]) == "1" |
-            input$select_project[1] == "" ) {return()}
+    if (user_folder != "" ){
+        shinyDirChoose(input, 'select_project', roots = user_folder
+                       )
+    }
+
+    observeEvent(c(input$select_project, input$file, input$update),{
+      req(input$select_project)
+      if (input$select_project[1] == "" ){
+             return()
+      }
+      output$project_directory <- renderPrint({parseDirPath(user_folder,
+                                                      input$select_project)
+                                              })
+      if (as.character(input$select_project[1]) == "1" |
+          input$select_project[1] == "" ) {
+               return()
+           }
         project_path <<- parseDirPath(user_folder, input$select_project)
+
+        if (length(project_path) == 0 ){
+            return()
+          }
+        if (project_path == "" ){
+            return()
+          }
+        
         docs_df_path <<- paste0(project_path,
                                 "/data_frames/qcoder_documents_",
                                 basename(project_path), ".rds")
@@ -424,7 +440,7 @@ server <- function(input, output, session) {
             list(useShinyjs(),               
                  aceEditor(
                      editor_name,
-                     outputID = "ace",
+                     outputId = "ace",
                      value = doc(),
                      mode = "markdown",
                      height = "500",
@@ -523,14 +539,14 @@ server <- function(input, output, session) {
             input$coding_weight,
             input$coding_class,
             input$document_part,
-            input$selected, sep = "----"))
+            input$ace_selected, sep = "----"))
         req(input$select_concept_from,
             input$select_concept_to,
             input$coding_sign,
             input$coding_weight,
             input$coding_class,
             input$document_part,
-            input$selected)
+            input$ace_selected)
         x <- readRDS(codings_df_path)
         doc <- readRDS(docs_df_path)
         qcoder::add_new_coding(
@@ -541,7 +557,7 @@ server <- function(input, output, session) {
                     input$coding_weight,
                     input$coding_class,
                     input$document_part,
-                    input$selected,
+                    input$ace_selected,
                     x, codings_df_path)
     })
     
@@ -565,7 +581,8 @@ server <- function(input, output, session) {
         codes <- select_codes
         selected <- input$ace_selected
         if (length(selected) == 0) {return(message("No text selected"))}
-
+        print(paste(codes, selected,collapse="-----"))
+        
         updated_selection <- qcoder:::add_codes_to_selection(selection = selected, codes = codes)
         updated_text <- qcoder:::replace_selection(text_old, selected, updated_selection)
 
